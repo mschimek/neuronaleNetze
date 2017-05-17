@@ -59,11 +59,15 @@ class Perceptron(Classifier):
         
         # Write your code to train the perceptron here
         for epoch in range(0, self.epochs):
+            errorSum = np.zeros(len(self.trainingSet.input[0]))
             for i in range(0, len(self.trainingSet.input)):
                 input = self.trainingSet.input[i]
                 label = int(self.trainingSet.label[i])
                 output = int(self.classify(input))
-                self.updateWeights(input, label - output)
+                error = label - output
+                if error != 0:
+                    errorSum += error * input
+            self.updateWeights(errorSum)
 
     def classify(self, testInstance):
         """Classify a single instance.
@@ -100,10 +104,9 @@ class Perceptron(Classifier):
         # set.
         return list(map(self.classify, test))
 
-    def updateWeights(self, input, error):
+    def updateWeights(self, input):
         # Write your code to update the weights of the perceptron here
-        if (error != 0):
-            self.weight = map(lambda x, y : x + error * self.learningRate * y, self.weight, input)
+        self.weight += self.learningRate * input
          
     def fire(self, input):
         """Fire the output of the perceptron corresponding to the input """
